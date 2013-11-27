@@ -1,0 +1,29 @@
+{
+    "name": "magento-ecg/magento-finder",
+    "description": "Magento Finder extends Symfony Finder component and finds Magento modules; models, controllers, helpers, etc.; rewrites, cron jobs and events declared, and many more.",
+    "homepage": "https://github.com/magento-ecg/magento-finder",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Magento Expert Consulting Group",
+            "homepage": "http://magentocommerce.com/consulting",
+            "role": "Maintainer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/magento-ecg/magento-finder/issues"
+    },
+    "require": {
+        "nikic/php-parser": "0.9.*@dev",
+        "symfony/finder": "2.4.*@dev"
+    },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ],
+        "psr-0": {
+            "Ecg\\MagentoFinder": ""
+        }
+    },
+    "target-dir": "Ecg/MagentoFinder"
+}
