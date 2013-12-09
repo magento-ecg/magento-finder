@@ -1,7 +1,7 @@
 magento-finder
 ==============
 
-###Note: This tool is currently under development.
+##Note: This tool is currently under development.
 
 Magento Finder extends Symfony Finder component and finds special Magento files and directories that can be:
 
