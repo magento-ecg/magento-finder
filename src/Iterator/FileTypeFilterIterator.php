@@ -3,7 +3,9 @@
 namespace Ecg\MagentoFinder\Iterator;
 
 use Ecg\MagentoFinder\FileInfo,
-    Symfony\Component\Finder\Iterator\FilterIterator;
+    Ecg\MagentoFinder\FileInfo\Module,
+    Symfony\Component\Finder\Iterator\FilterIterator,
+    Symfony\Component\Finder\SplFileInfo as SymfonySplFileInfo;
 
 class FileTypeFilterIterator extends FilterIterator
 {
@@ -17,11 +19,58 @@ class FileTypeFilterIterator extends FilterIterator
     protected $mode;
 
     /**
+     * @param SymfonySplFileInfo $fileInfo
+     * @return FileInfo
+     */
+    protected function getCurrent(SymfonySplFileInfo $fileInfo)
+    {
+        $info = array();
+
+        $info['path'] = $fileInfo->getRealPath();
+        $pathParts = explode(DIRECTORY_SEPARATOR, $fileInfo->getRealPath()); //@todo work on compatible DS
+        $k = array_search('app', $pathParts);
+        if (array_key_exists($k + 1, $pathParts) && $pathParts[$k + 1] == 'code' &&
+            array_key_exists($k + 2, $pathParts) && in_array($pathParts[$k + 2], array('local', 'community', 'core'))) {
+            $info['codepool'] = $pathParts[$k + 2];
+            if (!array_key_exists($k + 3, $pathParts)) {
+                return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname());
+            } else {
+                $info['namespace'] = $pathParts[$k + 3];
+                if (!array_key_exists($k + 4, $pathParts)) {
+                    return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname());
+                } else {
+                    $info['module'] = $info['namespace'] . '_' . $pathParts[$k + 4];
+                    if (!array_key_exists($k + 5, $pathParts)) {
+                        $file = new Module(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname());
+                        return $file;
+                    } else {
+                        $info['component'] = strtolower($pathParts[$k + 5]);
+                        switch ($pathParts[$k + 5]) {
+                            case 'Model' :
+                                return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname());
+                            case 'Helper' :
+                                return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname());
+                            case 'Controller' :
+                                return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname());
+                            case 'Block' :
+                                return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname());
+                            default  :
+                                return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname());
+                        }
+                    }
+                }
+            }
+        }
+
+        return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname());
+    }
+
+    /**
      * @return FileInfo
      */
     public function current()
     {
-        return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname());
+        return $this->getCurrent(parent::current());
     }
 
     /**
@@ -43,12 +92,12 @@ class FileTypeFilterIterator extends FilterIterator
      */
     public function accept()
     {
-        $fileinfo = $this->current();
-        if (self::ONLY_MODULES === (self::ONLY_MODULES & $this->mode) && $fileinfo->isModule()) {
+        $fileInfo = $this->current();
+        if (self::ONLY_MODULES === (self::ONLY_MODULES & $this->mode) && ($fileInfo instanceof Module)) {
             return true;
-        } elseif (self::ONLY_DIRECTORIES === (self::ONLY_DIRECTORIES & $this->mode) && $fileinfo->isFile()) {
+        } elseif (self::ONLY_DIRECTORIES === (self::ONLY_DIRECTORIES & $this->mode) && $fileInfo->isFile()) {
             return false;
-        } elseif (self::ONLY_FILES === (self::ONLY_FILES & $this->mode) && $fileinfo->isDir()) {
+        } elseif (self::ONLY_FILES === (self::ONLY_FILES & $this->mode) && $fileInfo->isDir()) {
             return false;
         }
         return true;
