@@ -15,6 +15,9 @@
     },
     "require": {
         "nikic/php-parser": "0.9.*@dev",
+        "sebastian/phpcpd": "2.0.*@dev",
+        "sebastian/phpdcd": "1.0.*@dev",
+        "phploc/phploc": "2.0.*@dev",
         "symfony/console": "2.4.*@dev",
         "symfony/finder": "2.4.*@dev"
     },

@@ -11,6 +11,13 @@ use PHPParser_Lexer,
 
 class Helper
 {
+    const APP_DEPTH       = 1;
+    const CODE_DEPTH      = 2;
+    const CODEPOOL_DEPTH  = 3;
+    const NAMESPACE_DEPTH = 4;
+    const MODULE_DEPTH    = 5;
+    const COMPONENT_DEPTH = 6;
+
     const MAGE_VERSION_PART_NODE_XPATH = <<<XPATH
 //node:Stmt_ClassMethod/subNode:name[scalar:string="getVersionInfo"]/preceding::node:Stmt_Return
 //node:Expr_ArrayItem[subNode:key//subNode:value[scalar:string="%s"]]/subNode:value//subNode:value/scalar:string
@@ -100,5 +107,33 @@ XPATH;
             }
         }
         throw new InvalidArgumentException(sprintf('Cannot find module %s within the specified path', $moduleName));
+    }
+
+    /**
+     * @param $path
+     * @return array|bool
+     */
+    public function getMagePathParts($path)
+    {
+        $pathParts = explode(DIRECTORY_SEPARATOR, trim($path, DIRECTORY_SEPARATOR));
+        $k = array_search('app', $pathParts);
+        if ($k === false) return is_dir($path . DIRECTORY_SEPARATOR . 'app') ? array() : false;
+        return array_slice($pathParts, $k);
+    }
+
+    /**
+     *            0     1    2    3             4         5        6
+     * path/to/magento/app/code/[codepool]/[namespace]/[module]/[component]
+     *
+     * [codepool]  = local | community | core
+     * [component] = model | helper | controller | block | data | sql | etc
+     *
+     * @param $path
+     * @return int
+     */
+    public function getCurrentDepth($path)
+    {
+        $parts = $this->getMagePathParts($path);
+        return $parts !== false ? count($parts) : -1;
     }
 }

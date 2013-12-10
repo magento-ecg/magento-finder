@@ -2,7 +2,7 @@
 
 namespace Ecg\MagentoFinder;
 
-use Ecg\MagentoFinder\Adapter\PhpAdapter,
+use Ecg\MagentoFinder\Adapter\MagentoPhpAdapter,
     Symfony\Component\Finder\Finder as SimfonyFinder;
 
 class Finder extends SimfonyFinder
@@ -14,7 +14,7 @@ class Finder extends SimfonyFinder
     {
         parent::__construct();
         $this->removeAdapters()
-            ->addAdapter(new PhpAdapter(), -50)
+            ->addAdapter(new MagentoPhpAdapter(), -50)
             ->setAdapter('magento-php');
     }
 
@@ -22,8 +22,6 @@ class Finder extends SimfonyFinder
      * Restricts the matching to modules only.
      *
      * @return Finder The current Finder instance
-     *
-     * @api
      */
     public function modules()
     {

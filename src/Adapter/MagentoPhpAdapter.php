@@ -6,7 +6,7 @@ use Ecg\MagentoFinder\Iterator\FileTypeFilterIterator,
     Symfony\Component\Finder\Adapter\PhpAdapter as SymfonyPhpAdapter,
     Symfony\Component\Finder\Iterator;
 
-class PhpAdapter extends SymfonyPhpAdapter
+class MagentoPhpAdapter extends SymfonyPhpAdapter
 {
     /**
      * @var bool

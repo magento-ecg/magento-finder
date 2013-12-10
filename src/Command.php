@@ -14,7 +14,10 @@ class Command extends SymfonyCommand
     {
         $this->setName('magento-finder')
             ->setDescription('Magento Finder Tool')
-            ->addArgument('path', InputArgument::REQUIRED, 'Path to code');
+            ->addArgument('path', InputArgument::REQUIRED, 'Path to code')
+            ->addOption('list-modules', null, InputOption::VALUE_NONE, 'Get list of modules')
+            ->addOption('code-metrics', null, InputOption::VALUE_NONE, 'Get code metrics')
+            ->addOption('rewrites', null, InputOption::VALUE_NONE, 'Get rewrites');
     }
 
     /**
@@ -24,10 +27,36 @@ class Command extends SymfonyCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $finder = new Finder();
-        $finder->modules()->in($input->getArgument('path'));
-        foreach ($finder as $module) {
-            print_r($module->getRewrites());
+        $finder = new Finder;
+        $helper = new Helper;
+        $path   = $input->getArgument('path');
+        $depth  = Helper::MODULE_DEPTH - $helper->getCurrentDepth($path) - 1;
+
+        $finder->modules()->in($path)->depth($depth);
+
+        if($input->getOption('list-modules')) {
+            foreach ($finder as $module) {
+                echo $module->getName() . PHP_EOL;
+            }
+            return;
+        }
+
+        if($input->getOption('code-metrics')) {
+            foreach ($finder as $module) {
+                echo $module->getName() . PHP_EOL;
+                print_r($module->getCodeMetrics());
+                echo PHP_EOL . PHP_EOL;
+            }
+            return;
+        }
+
+        if($input->getOption('rewrites')) {
+            foreach ($finder as $module) {
+                echo $module->getName() . PHP_EOL;
+                print_r($module->getRewrites());
+                echo PHP_EOL . PHP_EOL;
+            }
+            return;
         }
     }
 }

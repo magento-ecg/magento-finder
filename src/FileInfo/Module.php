@@ -7,7 +7,7 @@ use Ecg\MagentoFinder\FileInfo,
     SimpleXMLElement,
     Symfony\Component\Finder\SplFileInfo;
 
-class Module extends FileInfo
+class Module extends File implements ModuleInterface
 {
     public function getRewrites()
     {
@@ -39,5 +39,33 @@ class Module extends FileInfo
             }
         }
         return $res;
+    }
+
+    public function getEventListeners()
+    {
+        // TODO: Implement getEventListeners() method.
+    }
+
+    public function getCronJobs()
+    {
+        // TODO: Implement getCronJobs() method.
+    }
+
+    /**
+     * @return array
+     */
+    public function getVersion()
+    {
+        // TODO: Implement getVersion() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        $module = end($this->info['path_parts']);
+        $codepool = prev($this->info['path_parts']);
+        return $codepool . '_' . $module;
     }
 }
