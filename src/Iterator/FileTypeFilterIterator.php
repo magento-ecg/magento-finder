@@ -3,8 +3,7 @@
 namespace Ecg\MagentoFinder\Iterator;
 
 use Ecg\MagentoFinder\FileInfo,
-    Ecg\MagentoFinder\FileInfo\Module,
-    Ecg\MagentoFinder\FileInfo\File,
+    Ecg\MagentoFinder\FileInfo\ModuleInfo,
     Ecg\MagentoFinder\Helper,
     Symfony\Component\Finder\Iterator\FileTypeFilterIterator as SymfonyFileTypeFilterIterator,
     Symfony\Component\Finder\SplFileInfo as SymfonySplFileInfo;
@@ -39,17 +38,23 @@ class FileTypeFilterIterator extends SymfonyFileTypeFilterIterator
      */
     public function current()
     {
-        $mageParts = $this->helper->getMagePathParts(parent::current()->getRealPath());
+        $path = parent::current()->getRealPath();
+        $mageParts = $this->helper->getMagePathParts($path);
         $depth = count($mageParts);
         $info = array('path_parts' => $mageParts);
 
+        if ($mageParts === false || !in_array('code', $mageParts))
+            return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname(), $info);
+
         switch ($depth) {
             case Helper::MODULE_DEPTH :
-                return new Module(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname(), $info);
+                if (!is_dir($path))
+                    return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname(), $info);
+                return new ModuleInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname(), $info);
             case Helper::COMPONENT_DEPTH :
-                return new File(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname(), $info);
+                return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname(), $info);
             default :
-                return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname());
+                return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname(), $info);
         }
     }
 
@@ -61,7 +66,7 @@ class FileTypeFilterIterator extends SymfonyFileTypeFilterIterator
     public function accept()
     {
         $fileInfo = $this->current();
-        if (self::ONLY_MODULES === (self::ONLY_MODULES & $this->mode) && ($fileInfo instanceof Module) && is_dir($fileInfo->getRealPath())) {
+        if (self::ONLY_MODULES === (self::ONLY_MODULES & $this->mode) && ($fileInfo instanceof ModuleInfo)) {
             return true;
         }
         return parent::accept();

@@ -12,12 +12,16 @@ class FileInfo extends SymfonySplFileInfo
     public $info = array();
 
     /**
-     * @param string $pattern
-     * @return FileInfo
+     * Constructor
+     *
+     * @param string $file The file name
+     * @param string $relativePath The relative path
+     * @param string $relativePathname The relative path name
+     * @param array $info
      */
-    public function getFiles($pattern = '/.*/')
+    public function __construct($file, $relativePath, $relativePathname, $info)
     {
-        $finder = new Finder();
-        return $finder->files()->in($this->getRealPath())->name($pattern);
+        parent::__construct($file, $relativePath, $relativePathname);
+        $this->info = $info;
     }
 }
