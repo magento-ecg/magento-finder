@@ -2,7 +2,7 @@
 
 namespace Ecg\MagentoFinder\FileInfo;
 
-interface FileInterface
+interface PhpFileInfoInterface
 {
     function getDispatchedEvents();
 

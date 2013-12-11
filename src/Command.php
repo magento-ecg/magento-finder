@@ -21,6 +21,7 @@ class Command extends SymfonyCommand
     }
 
     /**
+     * @todo validate path
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null|void
@@ -36,7 +37,9 @@ class Command extends SymfonyCommand
 
         if($input->getOption('list-modules')) {
             foreach ($finder as $module) {
-                echo $module->getName() . PHP_EOL;
+                echo $module->getName();
+                echo ' (v' . $module->getVersion() . ')';
+                echo PHP_EOL;
             }
             return;
         }

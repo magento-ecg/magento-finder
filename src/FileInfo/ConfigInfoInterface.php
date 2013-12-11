@@ -2,7 +2,7 @@
 
 namespace Ecg\MagentoFinder\FileInfo;
 
-interface ModuleInterface extends FileInterface
+interface ConfigInfoInterface extends FileInfoInterface
 {
     /**
      * @return array
@@ -25,7 +25,8 @@ interface ModuleInterface extends FileInterface
     function getVersion();
 
     /**
-     * @return string
+     * @return array
      */
-    function getName();
+    function getRouters();
+
 }
