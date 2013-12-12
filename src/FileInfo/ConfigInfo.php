@@ -33,12 +33,12 @@ class ConfigInfo extends FileInfo implements ConfigInfoInterface
         $result = $this->xml->xpath('//rewrite');
         foreach ($result as $item) {
             foreach ($item as $c => $v) {
-                $parent = $item->xpath("parent::*");
+                $parent = $item->xpath("..");
                 if (empty($parent)) {
                     continue;
                 }
                 $b = $parent[0]->getName();
-                $grandParent = $parent[0]->xpath("parent::*");
+                $grandParent = $parent[0]->xpath("..");
                 if (empty($grandParent)) {
                     continue;
                 }
@@ -105,7 +105,10 @@ class ConfigInfo extends FileInfo implements ConfigInfoInterface
 
         $res = array();
         foreach ($updates as $update) {
-            $res[$update->getName()] = (string)$update->file;
+            $res[$update->getName()] = array(
+                'file' => (string)$update->file,
+                'area' => (string)$update->xpath('../../..')[0]->getName()
+            );
         }
         return $res;
     }
