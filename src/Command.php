@@ -17,7 +17,10 @@ class Command extends SymfonyCommand
             ->addArgument('path', InputArgument::REQUIRED, 'Path to code')
             ->addOption('list-modules', null, InputOption::VALUE_NONE, 'Get list of modules')
             ->addOption('code-metrics', null, InputOption::VALUE_NONE, 'Get code metrics')
-            ->addOption('rewrites', null, InputOption::VALUE_NONE, 'Get rewrites');
+            ->addOption('rewrites', null, InputOption::VALUE_NONE, 'Get rewrites')
+            ->addOption('event-listeners', null, InputOption::VALUE_NONE, 'Get event listeners')
+            ->addOption('cron-jobs', null, InputOption::VALUE_NONE, 'Get cron jobs')
+            ->addOption('layout-updates', null, InputOption::VALUE_NONE, 'Get layout updates files');
     }
 
     /**
@@ -57,6 +60,33 @@ class Command extends SymfonyCommand
             foreach ($finder as $module) {
                 echo $module->getName() . PHP_EOL;
                 print_r($module->getRewrites());
+                echo PHP_EOL . PHP_EOL;
+            }
+            return;
+        }
+
+        if($input->getOption('event-listeners')) {
+            foreach ($finder as $module) {
+                echo $module->getName() . PHP_EOL;
+                print_r($module->getEventListeners());
+                echo PHP_EOL . PHP_EOL;
+            }
+            return;
+        }
+
+        if($input->getOption('cron-jobs')) {
+            foreach ($finder as $module) {
+                echo $module->getName() . PHP_EOL;
+                print_r($module->getCronJobs());
+                echo PHP_EOL . PHP_EOL;
+            }
+            return;
+        }
+
+        if($input->getOption('layout-updates')) {
+            foreach ($finder as $module) {
+                echo $module->getName() . PHP_EOL;
+                print_r($module->getLayoutUpdates());
                 echo PHP_EOL . PHP_EOL;
             }
             return;

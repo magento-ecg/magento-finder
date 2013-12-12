@@ -29,4 +29,9 @@ interface ConfigInfoInterface extends FileInfoInterface
      */
     function getRouters();
 
+    /**
+     * @return array
+     */
+    function getLayoutUpdates();
+
 }

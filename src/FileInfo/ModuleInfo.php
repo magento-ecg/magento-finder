@@ -44,7 +44,7 @@ class ModuleInfo extends FileInfo implements ModuleInfoInterface
 
     public function getCronJobs()
     {
-        return $this->getConfig()->getСronJobs();
+        return $this->getConfig()->getCronJobs();
     }
 
     /**
@@ -53,6 +53,14 @@ class ModuleInfo extends FileInfo implements ModuleInfoInterface
     public function getVersion()
     {
         return $this->getConfig()->getVersion();
+    }
+
+    /**
+     * @return array
+     */
+    public function getLayoutUpdates()
+    {
+        return $this->getConfig()->getLayoutUpdates();
     }
 
     /**

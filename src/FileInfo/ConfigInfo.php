@@ -7,11 +7,30 @@ use Ecg\MagentoFinder\FileInfo,
 
 class ConfigInfo extends FileInfo implements ConfigInfoInterface
 {
+    /**
+     * @var SimpleXmlElement
+     */
+    protected $xml;
+
+    /**
+     * Constructor
+     *
+     * @param string $file The file name
+     * @param string $relativePath The relative path
+     * @param string $relativePathname The relative path name
+     * @param array $info
+     */
+    public function __construct($file, $relativePath, $relativePathname, $info)
+    {
+        parent::__construct($file, $relativePath, $relativePathname, $info);
+        $this->xml = new SimpleXMLElement($this->getContents());
+    }
+
     public function getRewrites()
     {
         $res = array();
-        $xml = new SimpleXMLElement($this->getContents());
-        $result = $xml->xpath('//rewrite');
+
+        $result = $this->xml->xpath('//rewrite');
         foreach ($result as $item) {
             foreach ($item as $c => $v) {
                 $parent = $item->xpath("parent::*");
@@ -35,12 +54,33 @@ class ConfigInfo extends FileInfo implements ConfigInfoInterface
 
     public function getEventListeners()
     {
-        // TODO: Implement getEventListeners() method.
+        $res = array();
+        $events = $this->xml->xpath('//events/*');
+
+        foreach ($events as $event) {
+            $res[] = array(
+                'area' => (string)$event->xpath('../..')[0]->getName(),
+                'event' => $event->getName(),
+                'class' => (string)$event->xpath('.//class')[0],
+                'run_method' => (string)$event->xpath('.//method')[0]
+            );
+        }
+
+        return $res;
     }
 
     public function getCronJobs()
     {
-        // TODO: Implement getCronJobs() method.
+        $res = array();
+        $cronJobs = $this->xml->xpath('//crontab/jobs/*');
+
+        foreach ($cronJobs as $job) {
+            $res[] = array(
+                'schedule' => (string)$job->schedule->cron_expr,
+                'run_method' => (string)$job->run->model,
+            );
+        }
+        return $res;
     }
 
     /**
@@ -48,15 +88,25 @@ class ConfigInfo extends FileInfo implements ConfigInfoInterface
      */
     public function getVersion()
     {
-        $xml = new SimpleXMLElement($this->getContents());
-        return (string)$xml->xpath('//modules/'. $this->info['name'] . '/version')[0];
+        return (string)$this->xml->xpath('//modules/' . $this->info['name'] . '/version')[0];
     }
 
     /**
      * @return array
      */
-    function getRouters()
+    public function getRouters()
     {
         // TODO: Implement getRouters() method.
+    }
+
+    public function getLayoutUpdates()
+    {
+        $updates = $this->xml->xpath('//layout/updates/*');
+
+        $res = array();
+        foreach ($updates as $update) {
+            $res[$update->getName()] = (string)$update->file;
+        }
+        return $res;
     }
 }
