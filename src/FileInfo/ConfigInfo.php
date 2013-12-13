@@ -44,8 +44,10 @@ class ConfigInfo extends FileInfo implements ConfigInfoInterface
                 }
 
                 $a = $grandParent[0]->getName();
-                $res[] = $v . ',' . $a . '_' . $b . '_' . $c . PHP_EOL;
-
+                $res[] = array(
+                    'from' => $a . '_' . $b . '_' . $c,
+                    'to'   => $v
+                ) ;
             }
         }
 
