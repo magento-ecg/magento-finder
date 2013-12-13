@@ -5,7 +5,7 @@ namespace Ecg\MagentoFinder\FileInfo;
 use Ecg\MagentoFinder\FileInfo,
     SebastianBergmann\PHPLOC\Analyser;
 
-class PhpFileInfo extends FileInfo implements PhpFileInfoInterface
+class PhpFileInfo extends FileInfo implements PhpFileInfoInterface, PhpClassInfoInterface
 {
     /**
      * @return array
@@ -22,5 +22,15 @@ class PhpFileInfo extends FileInfo implements PhpFileInfoInterface
     public function getDispatchedEvents()
     {
         // TODO: Implement getDispatchedEvents() method.
+    }
+
+    function getClassName()
+    {
+        // TODO: Implement getClassName() method.
+    }
+
+    function getInterfaceNames()
+    {
+        // TODO: Implement getInterfaceNames() method.
     }
 }

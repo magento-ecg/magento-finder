@@ -23,7 +23,7 @@ class ModuleInfo extends FileInfo implements ModuleInfoInterface
      */
     public function getConfig()
     {
-        if (!$this->config) {
+        if ($this->config === null) {
             $configPathName = DIRECTORY_SEPARATOR . 'etc';
             $configPath = $configPathName . DIRECTORY_SEPARATOR . 'config.xml';
             $this->config = new ConfigInfo($this->getRealPath() . $configPath, $this->getRelativePath() . $configPath, $this->getRelativePathname() . $configPathName,

@@ -7,4 +7,8 @@ interface PhpFileInfoInterface
     function getDispatchedEvents();
 
     function getCodeMetrics();
+
+    //function getClassName();
+
+    //function getInterfaceNames();
 }
