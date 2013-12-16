@@ -34,8 +34,8 @@ class MagentoPhpAdapter extends SymfonyPhpAdapter
         $iterator = parent::searchInDirectory($dir);
         if ($this->onlyModules) {
             $this->setMode(FileTypeFilterIterator::ONLY_MODULES);
-            $iterator = new FileTypeFilterIterator($iterator, $this->mode);
         }
+        $iterator = new FileTypeFilterIterator($iterator, $this->mode);
         return $iterator;
     }
 }

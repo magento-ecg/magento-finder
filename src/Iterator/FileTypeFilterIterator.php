@@ -4,6 +4,7 @@ namespace Ecg\MagentoFinder\Iterator;
 
 use Ecg\MagentoFinder\FileInfo,
     Ecg\MagentoFinder\FileInfo\ModuleInfo,
+    Ecg\MagentoFinder\FileInfo\PhpFileInfo,
     Ecg\MagentoFinder\Helper,
     Symfony\Component\Finder\Iterator\FileTypeFilterIterator as SymfonyFileTypeFilterIterator,
     Symfony\Component\Finder\SplFileInfo as SymfonySplFileInfo;
@@ -38,13 +39,17 @@ class FileTypeFilterIterator extends SymfonyFileTypeFilterIterator
      */
     public function current()
     {
-        $path = parent::current()->getRealPath();
+        /** @var FileInfo $current */
+        $current = parent::current();
+        $path = $current->getRealPath();
         $mageParts = $this->helper->getMagePathParts($path);
         $depth = count($mageParts);
         $info = array('path_parts' => $mageParts);
 
         if ($mageParts === false || !in_array('code', $mageParts))
             return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname(), $info);
+        if ($current->isFile() && $current->getExtension() === 'php')
+            return new PhpFileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname(), $info);
 
         switch ($depth) {
             case Helper::MODULE_DEPTH :

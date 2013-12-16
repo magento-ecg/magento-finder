@@ -2,7 +2,8 @@
 
 namespace Ecg\MagentoFinder;
 
-use Symfony\Component\Console\Command\Command as SymfonyCommand,
+use Ecg\MagentoFinder\FileInfo\ModuleInfo,
+    Symfony\Component\Console\Command\Command as SymfonyCommand,
     Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Input\InputInterface,
@@ -20,7 +21,8 @@ class Command extends SymfonyCommand
             ->addOption('rewrites', null, InputOption::VALUE_NONE, 'Get rewrites')
             ->addOption('event-listeners', null, InputOption::VALUE_NONE, 'Get event listeners')
             ->addOption('cron-jobs', null, InputOption::VALUE_NONE, 'Get cron jobs')
-            ->addOption('layout-updates', null, InputOption::VALUE_NONE, 'Get layout updates files');
+            ->addOption('layout-updates', null, InputOption::VALUE_NONE, 'Get layout updates files')
+            ->addOption('overrides', null, InputOption::VALUE_NONE, 'Get parent classes');
     }
 
     /**
@@ -35,6 +37,13 @@ class Command extends SymfonyCommand
         $helper = new Helper;
         $path   = $input->getArgument('path');
         $depth  = Helper::MODULE_DEPTH - $helper->getCurrentDepth($path) - 1;
+
+        if ($helper->getCurrentDepth($path) == Helper::MODULE_DEPTH) {
+            $mageParts = $helper->getMagePathParts($path);
+            $module = new ModuleInfo($path, '', '', array('path_parts' => $mageParts));
+            $finder->append(array($module));
+            $depth = 0;
+        }
 
         $finder->modules()->in($path)->depth($depth);
 
@@ -87,6 +96,15 @@ class Command extends SymfonyCommand
             foreach ($finder as $module) {
                 echo $module->getName() . PHP_EOL;
                 print_r($module->getLayoutUpdates());
+                echo PHP_EOL . PHP_EOL;
+            }
+            return;
+        }
+
+        if($input->getOption('overrides')) {
+            foreach ($finder as $module) {
+                echo $module->getName() . PHP_EOL;
+                print_r($module->getOverrides());
                 echo PHP_EOL . PHP_EOL;
             }
             return;

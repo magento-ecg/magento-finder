@@ -14,9 +14,36 @@ class ModuleInfo extends FileInfo implements ModuleInfoInterface
     protected $name;
 
     /**
+     * @var string
+     */
+    protected $namespace;
+
+    /**
+     * @var string
+     */
+    protected $codepool;
+
+    /**
      * @var ConfigInfo
      */
     protected $config;
+
+    /**
+     * Constructor
+     *
+     * @param string $file The file name
+     * @param string $relativePath The relative path
+     * @param string $relativePathname The relative path name
+     * @param array $info
+     */
+    public function __construct($file, $relativePath, $relativePathname, $info)
+    {
+        parent::__construct($file, $relativePath, $relativePathname, $info);
+        $module = end($this->info['path_parts']);
+        $this->namespace = prev($this->info['path_parts']);
+        $this->codepool = prev($this->info['path_parts']);
+        $this->name = $this->namespace . '_' . $module;
+    }
 
     /**
      * @return ConfigInfo
@@ -69,12 +96,6 @@ class ModuleInfo extends FileInfo implements ModuleInfoInterface
      */
     public function getName()
     {
-        if (!$this->name) {
-            $module = end($this->info['path_parts']);
-            $codepool = prev($this->info['path_parts']);
-            $this->name = $codepool . '_' . $module;
-        }
-
         return $this->name;
     }
 
@@ -91,25 +112,38 @@ class ModuleInfo extends FileInfo implements ModuleInfoInterface
     /**
      * @return array
      */
-    function getOverrides()
+    public function getOverrides()
     {
-        // TODO: Implement getOverrides() method.
+        $finder = new Finder();
+        $finder->name('*.php')->in($this->getRealPath());
+
+        $res = array();
+        /** @var PhpFileInfo $file */
+        foreach ($finder as $file) {
+            if ($name = $file->getClassName()) {
+                $res[] = array(
+                    'class_name' => $name,
+                    'parent_class_name' => $file->getParentClassName(),
+                );
+            }
+        }
+        return $res;
     }
 
     /**
      * @return mixed
      */
-    function getCodepool()
+    public function getCodepool()
     {
-        // TODO: Implement getCodepool() method.
+        return $this->codepool;
     }
 
     /**
      * @return mixed
      */
-    function getNamespace()
+    public function getNamespace()
     {
-        // TODO: Implement getNamespace() method.
+        return $this->namespace;
     }
 
     /**
