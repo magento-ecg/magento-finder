@@ -53,18 +53,27 @@ class ConfigInfo extends FileInfo implements ConfigInfoInterface
         return $res;
     }
 
+    /**
+     * @todo deal with disabled observers
+     * @return array
+     */
     public function getEventListeners()
     {
         $res = array();
         $events = $this->xml->xpath('//events/*');
 
         foreach ($events as $event) {
-            $res[] = array(
-                'area' => (string)$event->xpath('../..')[0]->getName(),
-                'event' => $event->getName(),
-                'class' => (string)$event->xpath('.//class')[0],
-                'run_method' => (string)$event->xpath('.//method')[0]
-            );
+            $area = $event->xpath('../..');
+            $class = $event->xpath('.//class');
+            $method = $event->xpath('.//method');
+            if ($area && $class && $method) {
+                $res[] = array(
+                    'area' => (string)$area[0]->getName(),
+                    'event' => $event->getName(),
+                    'class' => (string)$class[0],
+                    'run_method' => (string)$method[0]
+                );
+            }
         }
 
         return $res;
