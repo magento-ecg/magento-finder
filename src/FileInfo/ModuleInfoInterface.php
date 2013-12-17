@@ -36,4 +36,9 @@ interface ModuleInfoInterface extends PhpFileInfoInterface
      * @return array
      */
     function getOverrides();
+
+    /**
+     * @return array
+     */
+    function getDuplicatedCode();
 }

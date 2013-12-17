@@ -22,7 +22,8 @@ class Command extends SymfonyCommand
             ->addOption('event-listeners', null, InputOption::VALUE_NONE, 'Get event listeners')
             ->addOption('cron-jobs', null, InputOption::VALUE_NONE, 'Get cron jobs')
             ->addOption('layout-updates', null, InputOption::VALUE_NONE, 'Get layout updates files')
-            ->addOption('overrides', null, InputOption::VALUE_NONE, 'Get parent classes');
+            ->addOption('overrides', null, InputOption::VALUE_NONE, 'Get parent classes')
+            ->addOption('copy-pastes', null, InputOption::VALUE_NONE, 'Get copy-pasted code');
     }
 
     /**
@@ -105,6 +106,15 @@ class Command extends SymfonyCommand
             foreach ($finder as $module) {
                 echo $module->getName() . PHP_EOL;
                 print_r($module->getOverrides());
+                echo PHP_EOL . PHP_EOL;
+            }
+            return;
+        }
+
+        if($input->getOption('copy-pastes')) {
+            foreach ($finder as $module) {
+                echo $module->getName() . PHP_EOL;
+                print_r($module->getDuplicatedCode());
                 echo PHP_EOL . PHP_EOL;
             }
             return;
