@@ -90,7 +90,7 @@ class ConfigInfo extends FileInfo implements ConfigInfoInterface
     public function getVersion()
     {
         $version = $this->xml->xpath('//modules/' . $this->info['name'] . '/version');
-        return count($version) ? $version[0] : '';
+        return count($version) ? (string)$version[0] : '';
     }
 
     /**
