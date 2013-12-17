@@ -53,7 +53,7 @@ class FileTypeFilterIterator extends SymfonyFileTypeFilterIterator
 
         switch ($depth) {
             case Helper::MODULE_DEPTH :
-                if (!is_dir($path))
+                if (!is_dir($path) || !is_file($path . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'config.xml'))
                     return new FileInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname(), $info);
                 return new ModuleInfo(parent::current()->getPathname(), $this->getSubPath(), $this->getSubPathname(), $info);
             case Helper::COMPONENT_DEPTH :
