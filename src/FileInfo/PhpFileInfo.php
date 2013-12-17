@@ -3,6 +3,7 @@
 namespace Ecg\MagentoFinder\FileInfo;
 
 use Ecg\MagentoFinder\FileInfo,
+    Exception,
     PHPParser_Lexer,
     PHPParser_Parser,
     PHPParser_Serializer_XML,
@@ -29,7 +30,12 @@ class PhpFileInfo extends FileInfo implements PhpFileInfoInterface, PhpClassInfo
         parent::__construct($file, $relativePath, $relativePathname, $info);
         $parser     = new PHPParser_Parser(new PHPParser_Lexer());
         $serializer = new PHPParser_Serializer_XML();
-        $this->xml  = new SimpleXMLElement($serializer->serialize($parser->parse($this->getContents())));
+        libxml_use_internal_errors(true);
+        try {
+            $this->xml  = new SimpleXMLElement($serializer->serialize($parser->parse($this->getContents())));
+        } catch (Exception $e) {
+            $this->xml = new SimpleXMLElement('<?xml version="1.0"?><dummy></dummy>');
+        }
     }
 
     /**
