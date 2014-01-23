@@ -3,6 +3,7 @@
 namespace Ecg\MagentoFinder\FileInfo;
 
 use Ecg\MagentoFinder\FileInfo,
+    Ecg\MagentoFinder\Helper,
     SimpleXMLElement;
 
 class ConfigInfo extends FileInfo implements ConfigInfoInterface
@@ -24,6 +25,7 @@ class ConfigInfo extends FileInfo implements ConfigInfoInterface
     {
         parent::__construct($file, $relativePath, $relativePathname, $info);
         $this->xml = new SimpleXMLElement($this->getContents());
+        $this->helper = new Helper;
     }
 
     public function getRewrites()
@@ -43,17 +45,31 @@ class ConfigInfo extends FileInfo implements ConfigInfoInterface
                 }
 
                 $a = $grandParent[0]->getName();
-                $res[] = array(
-                    'from' => $a . '_' . $b . '_' . $c,
-                    'to'   => (string)$v
-                );
+                if ($a == 'config') {
+                    continue; // skip url rewrites
+                }
+//                $res[] = array(
+//                    'from' => $a . '_' . $b . '_' . $c,
+//                    'to'   => (string)$v
+//                );
+                $className = $this->getGroupedClassName($a, $b, $c);
+                $res[$className] [] = (string) $v;
+
             }
         }
 
         return $res;
     }
 
-    /**
+    public function getGroupedClassName($groupType, $classId, $suffix)
+    {
+        $namespace = (strpos($classId, '_') !== false) ? '' : 'mage_';
+        $groupType = substr($groupType, 0, strlen($groupType) - 1);
+        $className = $namespace . $classId . '_' . $groupType . '_' . $suffix;
+        return $this->helper->ucWords($className);
+    }
+
+        /**
      * @todo deal with disabled observers
      * @return array
      */

@@ -136,4 +136,9 @@ XPATH;
         $parts = $this->getMagePathParts($path);
         return $parts !== false ? count($parts) : -1;
     }
+
+    public function ucWords($str, $destSep='_', $srcSep='_')
+    {
+        return str_replace(' ', $destSep, ucwords(str_replace($srcSep, ' ', $str)));
+    }
 }

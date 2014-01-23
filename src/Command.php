@@ -67,11 +67,30 @@ class Command extends SymfonyCommand
         }
 
         if($input->getOption('rewrites')) {
+			$globalRewrites	= array();
+            $conflictArray = array();
             foreach ($finder as $module) {
-                echo $module->getName() . PHP_EOL;
-                print_r($module->getRewrites());
-                echo PHP_EOL . PHP_EOL;
+                $rewrites = $module->getRewrites();
+                if (count($rewrites)) {
+                    echo $module->getName() . PHP_EOL;
+                    $globalRewrites = array_merge_recursive($globalRewrites, $rewrites);
+                    print_r($rewrites);
+                    echo PHP_EOL . PHP_EOL;
+                }
             }
+            foreach ($globalRewrites as $k => $v) {
+                if (count($v) > 1) {
+                    $conflictArray[] = array($k => $v);
+                }
+	            foreach ($v as $inner) {
+		            echo $k . "\t" . $inner."\n";
+		        }
+	        }
+            echo PHP_EOL . PHP_EOL;
+            echo 'Detected conflicts ' . count($conflictArray);
+            echo PHP_EOL;
+            print_r($conflictArray);
+            echo PHP_EOL . PHP_EOL;
             return;
         }
 
