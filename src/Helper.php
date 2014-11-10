@@ -2,9 +2,7 @@
 
 namespace Ecg\MagentoFinder;
 
-use PHPParser_Lexer,
-    PHPParser_Parser,
-    PHPParser_Serializer_XML,
+use PhpParser,
     RuntimeException,
     SimpleXMLElement,
     InvalidArgumentException;
@@ -48,9 +46,9 @@ XPATH;
      */
     public function getMagentoVersion($mageClassPath)
     {
-        $parser     = new PHPParser_Parser(new PHPParser_Lexer());
-        $serializer = new PHPParser_Serializer_XML();
-        $this->xml  = new SimpleXMLElement($serializer->serialize($parser->parse(file_get_contents($mageClassPath))));
+        $parser     = new PhpParser\Parser(new PhpParser\Lexer\Emulative);
+        $traverser  = new PhpParser\NodeTraverser;
+        $this->xml  = new SimpleXMLElement($traverser->traverse($parser->parse(file_get_contents($mageClassPath))));
 
         $version = array(
             $this->getVersionPart('major'),
