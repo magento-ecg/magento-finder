@@ -14,11 +14,11 @@
         "issues": "https://github.com/magento-ecg/magento-finder/issues"
     },
     "require": {
-        "nikic/php-parser": "0.9.*@dev",
-        "phploc/phploc": "2.0.*@dev",
+        "nikic/php-parser": "1.0.*@dev",
+        "phploc/phploc": "2.1.*@dev",
         "sebastian/phpcpd": "2.0.*@dev",
-        "symfony/console": "2.4.*@dev",
-        "symfony/finder": "2.4.*@dev"
+        "symfony/console": "2.6.*@dev",
+        "symfony/finder": "2.6.*@dev"
     },
     "autoload": {
         "classmap": [
